@@ -1,0 +1,158 @@
+{
+  "entities": {
+    "subscriber": {
+      "title": "Subscriber",
+      "description": "An email subscriber for analytical updates and notifications",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "User's subscriber email address",
+          "maxLength": 128
+        },
+        "channels": {
+          "type": "array",
+          "description": "Notification channels selected by the user"
+        },
+        "subscribedAt": {
+          "type": "string",
+          "description": "Timestamp of the subscription"
+        }
+      },
+      "required": ["email", "channels", "subscribedAt"]
+    },
+    "adminAccount": {
+      "title": "AdminAccount",
+      "description": "Observatory Administrator Account authorized by Owner",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Firebase Authentication UID of the administrator",
+          "maxLength": 128
+        },
+        "email": {
+          "type": "string",
+          "description": "Administrator email address",
+          "maxLength": 128
+        },
+        "role": {
+          "type": "string",
+          "description": "Assigned administrative role",
+          "enum": ["Super Administrator", "Administrator"]
+        },
+        "status": {
+          "type": "string",
+          "description": "Account authorization status",
+          "enum": ["Active", "Suspended", "Revoked"]
+        },
+        "grantedAt": {
+          "type": "string",
+          "description": "Timestamp when authorization was granted"
+        },
+        "grantedBy": {
+          "type": "string",
+          "description": "Identifier of the granting authority"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Optional administrative notes",
+          "maxLength": 500
+        }
+      },
+      "required": ["uid", "email", "role", "status", "grantedAt", "grantedBy"]
+    },
+    "auditLog": {
+      "title": "AuditLog",
+      "description": "Security audit record of administrative operations",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique audit log identifier",
+          "maxLength": 128
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp of the security event"
+        },
+        "actingUid": {
+          "type": "string",
+          "description": "UID of the acting user",
+          "maxLength": 128
+        },
+        "actingEmail": {
+          "type": "string",
+          "description": "Email of the acting user",
+          "maxLength": 128
+        },
+        "targetUid": {
+          "type": "string",
+          "description": "Target identifier of the operation",
+          "maxLength": 128
+        },
+        "operation": {
+          "type": "string",
+          "description": "Name of the audited operation",
+          "maxLength": 200
+        },
+        "status": {
+          "type": "string",
+          "description": "Result status of the operation",
+          "enum": ["SUCCESS", "FAILED"]
+        },
+        "reason": {
+          "type": "string",
+          "description": "Optional failure reason",
+          "maxLength": 500
+        }
+      },
+      "required": ["id", "timestamp", "actingUid", "actingEmail", "targetUid", "operation", "status"]
+    },
+    "cmsDocument": {
+      "title": "CmsDocument",
+      "description": "CMS managed configuration and publication content records",
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "description": "Array of publication or timeline records"
+        },
+        "config": {
+          "type": "object",
+          "description": "Configuration settings object"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp of the record update"
+        }
+      }
+    }
+  },
+  "firestore": {
+    "/subscribers/{subscriberId}": {
+      "schema": "subscriber",
+      "description": "List of active email subscribers"
+    },
+    "/cms_admins/{adminId}": {
+      "schema": "adminAccount",
+      "description": "Observatory Administrator Directory authorized by the Owner"
+    },
+    "/cms_audit_logs/{logId}": {
+      "schema": "auditLog",
+      "description": "Audit trail of administrative operations"
+    },
+    "/cms/{documentId}": {
+      "schema": "cmsDocument",
+      "description": "CMS collections and documents for election data, reports, and timeline"
+    },
+    "/reports/{reportId}": {
+      "schema": "cmsDocument",
+      "description": "Individual forensic audit reports"
+    },
+    "/publications/{publicationId}": {
+      "schema": "cmsDocument",
+      "description": "Observatory research briefs and publications"
+    }
+  }
+}

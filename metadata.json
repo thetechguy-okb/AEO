@@ -1,0 +1,8 @@
+{
+  "name": "Remix Athena Election Observatory",
+  "description": "An independent, non-partisan platform monitoring, auditing, and reporting on electoral health across Nigeria and Africa.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

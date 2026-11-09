@@ -1,0 +1,1194 @@
+Replace the existing AEO Democratic Competitiveness Map page with the supplied “DCM map with period history” prototype and turn it into the production DCM experience for the AEO website.
+
+IMPORTANT:
+
+Do NOT create a new DCM page or new URL.
+
+The existing production route must remain:
+
+/democratic-competitiveness-map
+
+The goal is to replace the current DCM page at that route with the new interactive DCM map, historical publication functionality and structured admin/CMS workflow while preserving the existing AEO website shell, navigation, footer, routing, styling system, analytics and SEO architecture.
+
+The prototype should NOT be embedded as an iframe.
+
+Rebuild the prototype's relevant interface, data model and interaction logic natively inside the existing AEO application.
+
+---
+
+# 1. DCM OFFICIAL NAME
+
+The official name is:
+
+Democratic Competitiveness Map (DCM)
+
+Replace any remaining references to:
+
+Democratic Competitiveness Monitor
+
+or other outdated DCM naming with:
+
+Democratic Competitiveness Map
+
+This applies to:
+
+- Homepage
+- Main navigation
+- DCM page
+- Page titles
+- Buttons
+- Internal links
+- Metadata
+- SEO
+- Open Graph content
+- Breadcrumbs
+- CMS labels
+- Search results
+- Any other website references
+
+The main navigation item should remain:
+
+DCM
+
+and should link directly to:
+
+/democratic-competitiveness-map
+
+---
+
+# 2. PRESERVE THE EXISTING DCM URL
+
+Keep the existing route:
+
+/democratic-competitiveness-map
+
+Do not create routes such as:
+
+/dcm-history
+/dcm-map-history
+/new-dcm
+/democratic-competitiveness-monitor
+/dcm-new
+
+The prototype is replacing the current DCM page, not creating a competing second DCM experience.
+
+Preserve the canonical URL.
+
+Ensure all existing DCM links continue working.
+
+---
+
+# 3. USE THE SUPPLIED PROTOTYPE AS THE FUNCTIONAL BASIS
+
+Use the uploaded “DCM map with period history” prototype as the functional and visual foundation.
+
+Preserve and productionise the following major features:
+
+- Interactive Nigeria state map
+- 36 states plus FCT
+- DCM colour classifications
+- Year selector
+- Month selector
+- Publication period selector
+- State selector
+- Clickable states
+- State classification history
+- January–December historical timeline
+- Two publication periods per month where applicable
+- Historical DCM maps
+- “What changed in this publication?” section
+- Previous-publication comparison
+- Change highlighting
+- Publication metadata
+- State-level classification information
+- DCM Brief request functionality
+
+Do not simply copy the bundled HTML into the site.
+
+Extract the useful component structure, map geometry, data logic and interactions and rebuild them using the existing application architecture.
+
+---
+
+# 4. OFFICIAL DCM INTRODUCTORY CONTENT
+
+At the top of the page, clearly introduce the DCM using this approved content:
+
+“What is DCM?
+
+The Democratic Competitiveness Map (DCM) is AEO’s state-by-state outlook of the conditions under which political competition occurs in Nigeria. It uses verified evidence to show the extent to which Nigeria’s political and institutional environment allows political actors to freely organise, campaign, and compete for public offices under fair, lawful, and reasonably equal conditions.
+
+The documented conditions in a particular state and during a defined reporting period are summarised and represented in a colour map.
+
+The DCM does not score or rank the states. Therefore, the colour map is not a numerical score, a political label, or a permanent judgment on a state.”
+
+This explanation must appear prominently before or around the map.
+
+The following message must remain highly visible:
+
+“The DCM does not score or rank states.”
+
+Do not bury this disclaimer in a footer or methodology page.
+
+---
+
+# 5. INITIAL MAP BEHAVIOUR
+
+Do not automatically select Benue or any other state when the page first loads.
+
+The default should be:
+
+All States
+
+When “All States” is active:
+
+- Display every state at normal opacity.
+- Show the complete national DCM picture.
+- Do not fade other states.
+- Do not show one state as selected.
+
+When a visitor clicks a state or selects one using the state dropdown:
+
+- Highlight that state.
+- Display its current classification.
+- Display its historical classification timeline.
+- Display relevant state-level information.
+- Other states may become visually secondary.
+
+Provide a clear:
+
+All States
+
+or:
+
+Clear selection
+
+control.
+
+---
+
+# 6. DCM CLASSIFICATIONS
+
+Use the following controlled classifications:
+
+- Open
+- Emerging concern
+- Constrained
+- Severely constrained
+- Insufficient evidence
+
+Retain the prototype’s classification colour system unless there is already an approved AEO colour specification that should take precedence.
+
+The map legend must remain visible near the map.
+
+Provide short explanatory text explaining that the colours represent documented political and institutional conditions during a specific reporting period.
+
+They are not:
+
+- Scores
+- Rankings
+- Ratings
+- Permanent political labels
+
+---
+
+# 7. PUBLICATION-BASED DCM STRUCTURE
+
+The DCM must support multiple historical publications.
+
+A DCM publication represents a defined reporting period.
+
+Users must be able to navigate historical maps through:
+
+Year → Month → Publication Period
+
+Changing the selected publication must update:
+
+- Map colours
+- State classifications
+- Selected state information
+- State history
+- “What changed” section
+- Previous-publication comparison
+- Evidence cut-off date
+- Methodology version
+- Revision information
+- Publication metadata
+
+The latest published DCM should load by default.
+
+Older publications must remain accessible.
+
+---
+
+# 8. STATE HISTORY
+
+When a state is selected, display its DCM classification history.
+
+Retain the prototype’s January–December timeline concept.
+
+Where two publications exist in one month, represent:
+
+- 1st–15th
+- 16th–month end
+
+Only reporting periods containing an actual DCM publication should be interactive.
+
+Periods without a publication should appear inactive.
+
+Do not interpret an unpublished period as:
+
+Insufficient evidence
+
+Selecting a historical period from the state timeline should update the map to that historical publication.
+
+---
+
+# 9. WHAT CHANGED IN THIS PUBLICATION
+
+Retain the:
+
+“What changed in this publication?”
+
+section.
+
+For each selected publication, automatically compare it with the immediately preceding published DCM.
+
+Display:
+
+- States whose classifications changed
+- Previous classification
+- New classification
+- States receiving their first classification
+- States returning to Insufficient evidence, where applicable
+- Short reason for the change, when supplied
+- Right of response status, where appropriate
+
+State names in this section should be clickable.
+
+Selecting a state should highlight that state on the map.
+
+Do not display prototype placeholders such as:
+
+[one-line reason from the decision record]
+
+or:
+
+Right of response: [status]
+
+If a field has no real data, omit it.
+
+Never expose fake placeholder content publicly.
+
+---
+
+# 10. HIGHLIGHT CHANGES CONTROL
+
+Expose the change-highlighting functionality.
+
+Add a control such as:
+
+“Highlight changes since previous publication”
+
+When enabled:
+
+- Outline states whose classification changed.
+- Keep their actual DCM classification colour.
+- Do not recolour them simply to indicate change.
+
+When viewing the baseline publication:
+
+- Hide or disable this control.
+- Explain that no earlier publication exists for comparison if necessary.
+
+---
+
+# 11. ABOUT THIS PUBLICATION
+
+Add an:
+
+“About this publication”
+
+section.
+
+Display:
+
+- Reporting period
+- Publication date
+- Evidence/data cut-off date
+- Methodology version
+- Correction/revision status
+- Whether this is the latest publication
+- Supporting DCM Brief/document, if available
+
+If the methodology version differs from the previous publication, indicate this clearly.
+
+---
+
+# 12. DCM DATA INTEGRITY
+
+Do NOT automatically convert missing data into:
+
+Insufficient evidence
+
+There must be a technical distinction between:
+
+1. A state intentionally classified as Insufficient evidence
+2. Missing classification data
+3. Malformed data
+4. Unpublished data
+
+“Insufficient evidence” must only appear when deliberately assigned.
+
+If required data is missing, show an admin validation error rather than silently creating a classification.
+
+---
+
+# 13. CMS / ADMIN DATA STRUCTURE
+
+Future DCM publications must be manageable without editing frontend source code, JavaScript arrays or JSON manually.
+
+Create a structured DCM CMS/admin data system.
+
+Each publication should support fields such as:
+
+- publication_id
+- publication_title
+- publication_date
+- publication_year
+- publication_month
+- period_start
+- period_end
+- reporting_period_label
+- evidence_cutoff_date
+- methodology_version
+- revision_note
+- publication_status
+- is_latest
+- publication_summary
+- changes_summary
+- supporting_document_url
+- created_at
+- updated_at
+
+Each state-level publication record should support:
+
+- publication_id
+- state
+- classification
+- classification_rationale
+- evidence_summary
+- right_of_response_status
+- supporting_source
+- internal_notes
+- created_at
+- updated_at
+
+Historical comparison fields such as previous classification and change status should preferably be derived automatically rather than stored manually.
+
+---
+
+# 14. DCM ADMIN DATA-ENTRY WORKFLOW
+
+The DCM must include a straightforward admin interface for creating future publications.
+
+Do NOT require administrators or researchers to edit code.
+
+Use a two-level entry process:
+
+## A. Publication Information
+
+When creating a publication, first collect:
+
+- Publication title
+- Publication year
+- Publication month
+- Reporting period start date
+- Reporting period end date
+- Publication date
+- Evidence/data cut-off date
+- Methodology version
+- Revision/correction note
+- Publication status
+- Latest/current publication setting
+- General publication summary
+- Optional manually written publication change summary
+- Supporting DCM Brief/document URL
+
+Publication status options:
+
+- Draft
+- Scheduled
+- Published
+- Archived
+
+Only Published records should appear publicly.
+
+Draft and scheduled records must not be visible on the public DCM page before their intended publication.
+
+---
+
+# 15. 37-JURISDICTION STATE CLASSIFICATION TABLE
+
+After publication metadata is created, display an admin table containing:
+
+- All 36 Nigerian states
+- FCT
+
+Each publication should therefore contain exactly:
+
+37 jurisdiction records
+
+Recommended columns:
+
+| State / FCT | Classification | Classification rationale | Evidence summary | Right of response status | Supporting source/document | Notes |
+
+The state list should already be populated.
+
+Administrators should not have to type state names manually.
+
+---
+
+# 16. CLASSIFICATION DROPDOWN
+
+Classification must be a controlled dropdown containing only:
+
+- Open
+- Emerging concern
+- Constrained
+- Severely constrained
+- Insufficient evidence
+
+Do not allow arbitrary classification values.
+
+Classification names should not be manually typed.
+
+---
+
+# 17. MISSING DATA VALIDATION
+
+A blank classification must NOT automatically become:
+
+Insufficient evidence
+
+Before a publication can be published, validate that:
+
+- All 36 states are present.
+- FCT is present.
+- Exactly 37 jurisdiction records exist.
+- Every jurisdiction has an explicit classification.
+- Required publication metadata is complete.
+- There are no duplicate state records.
+- Classification values are valid.
+
+If validation fails:
+
+- Block publication.
+- Clearly identify the missing or invalid fields.
+- Tell the administrator which states require attention.
+
+Drafts may remain incomplete.
+
+Published records may not.
+
+---
+
+# 18. AUTOMATIC HISTORICAL COMPARISON
+
+Administrators should NOT manually enter:
+
+- Previous classification
+- Whether classification changed
+- Change direction
+- Total number of changed states
+
+Calculate these automatically.
+
+Compare each state against the immediately preceding published DCM.
+
+Example:
+
+Previous publication:
+
+Kaduna — Emerging concern
+
+New publication:
+
+Kaduna — Constrained
+
+Automatically generate:
+
+Kaduna
+Emerging concern → Constrained
+Classification changed
+
+If a jurisdiction moves from Insufficient evidence to another classification, identify it as a first classification where this aligns with the DCM methodology.
+
+If the classification does not change, classify it internally as unchanged.
+
+---
+
+# 19. CHANGE RATIONALE
+
+For every state whose classification changes, require or strongly prompt the administrator to enter:
+
+Change rationale / Decision record summary
+
+Example:
+
+“Classification changed following verified incidents affecting campaign access and political assembly during the reporting period.”
+
+This field should feed the public:
+
+“What changed in this publication?”
+
+section.
+
+Do not rely on hard-coded frontend text.
+
+---
+
+# 20. RIGHT OF RESPONSE
+
+Provide a controlled Right of Response status field.
+
+Suggested values:
+
+- Not required
+- Pending
+- Requested
+- Response received
+- Response incorporated
+- No response received
+
+This should be editable for each state.
+
+Only expose Right of Response information publicly where required under the DCM methodology.
+
+---
+
+# 21. EXCEL / CSV BULK IMPORT
+
+In addition to manual CMS entry, support bulk upload using:
+
+- CSV
+- Excel/XLSX if supported by the existing technology stack
+
+Recommended import columns:
+
+publication_id
+state
+classification
+classification_rationale
+evidence_summary
+right_of_response_status
+supporting_source
+notes
+
+Example:
+
+publication_id,state,classification,classification_rationale,evidence_summary,right_of_response_status,supporting_source,notes
+
+DCM-2026-10-01,Lagos,Open,No material restrictions identified during the period,Verified monitoring evidence,Not required,,
+
+DCM-2026-10-01,Kaduna,Constrained,Documented conditions affected political competition,Verified monitoring evidence,Requested,,
+
+DCM-2026-10-01,FCT,Insufficient evidence,Insufficient verified evidence available for classification,Available evidence did not meet the classification threshold,Not required,,
+
+Before saving an upload, validate all rows.
+
+Reject or flag:
+
+- Unknown states
+- Misspelled states
+- Duplicate states
+- Invalid classification names
+- Missing classification
+- Duplicate records for the same publication/state
+- Missing FCT
+- Fewer than 37 records
+- More than 37 jurisdiction records
+
+Display import errors before committing the data.
+
+Allow administrators to fix errors and retry.
+
+---
+
+# 22. DOWNLOADABLE DATA TEMPLATE
+
+Provide a downloadable CSV or Excel template for administrators.
+
+The template should already contain all 37 jurisdictions.
+
+Example columns:
+
+State / FCT
+Classification
+Classification rationale
+Evidence summary
+Right of response status
+Supporting source/document
+Notes
+
+This will allow the research team to prepare a publication offline and upload it later.
+
+---
+
+# 23. DCM ADMIN WORKFLOW
+
+The intended workflow should be:
+
+1. Administrator creates a new DCM publication.
+
+2. Administrator enters publication metadata.
+
+3. System creates the 37-jurisdiction classification table.
+
+4. Administrator either:
+   - fills the table manually, or
+   - uploads the Excel/CSV template.
+
+5. System validates all records.
+
+6. System automatically compares classifications against the previous published DCM.
+
+7. System generates a preview showing:
+   - Map
+   - Classification legend
+   - Changed states
+   - State histories
+   - “What changed” section
+   - Publication metadata
+
+8. Administrator reviews the preview.
+
+9. Administrator publishes the DCM.
+
+10. Once published, the publication automatically appears in:
+   - Year selector
+   - Month selector
+   - Period selector
+   - State history
+   - Historical map
+   - Publication comparisons
+
+11. If marked as latest, the publication becomes the default map displayed publicly.
+
+---
+
+# 24. ADMIN PREVIEW
+
+Before publication, provide a preview matching the public-facing page as closely as possible.
+
+Preview:
+
+- National map
+- Classification colours
+- Legend
+- Publication period
+- State classifications
+- Changed states
+- State history
+- Publication information
+- DCM disclaimer
+- “What changed” section
+
+Allow the administrator to return to editing if errors are spotted.
+
+---
+
+# 25. EDITING EXISTING PUBLICATIONS
+
+Administrators must be able to edit an existing publication.
+
+If an already published classification changes:
+
+- Recalculate historical comparisons.
+- Recalculate state histories.
+- Recalculate affected “What changed” sections.
+- Record that the publication has been revised.
+- Require or allow a correction/revision note.
+
+Do not silently overwrite previously published information.
+
+Keep an audit-friendly revision history if the existing backend supports it.
+
+At minimum store:
+
+- Last updated date
+- Revision note
+
+---
+
+# 26. PUBLICATION ORDERING
+
+Historical publications must be ordered by:
+
+Publication/reporting date
+
+not by record creation date.
+
+The application must correctly identify the immediately preceding published DCM for historical comparisons.
+
+Drafts and scheduled records should not interfere with public comparison logic.
+
+---
+
+# 27. DCM BRIEF REQUEST FORM
+
+Retain the:
+
+“Request DCM Brief”
+
+feature.
+
+The production form must actually submit data.
+
+Do not simply change the interface to “Request received” without persisting or sending the request.
+
+Connect it to the website’s existing:
+
+- Form backend
+- Email system
+- Database
+- CRM
+
+or equivalent existing infrastructure.
+
+Suggested fields:
+
+- Name
+- Email
+- Organisation
+- Sector
+- Intended use
+- Consent
+
+Validate:
+
+- Required fields
+- Email format
+- Consent
+
+Provide clear success and failure messages.
+
+---
+
+# 28. PRIVACY NOTICE
+
+Connect the DCM Brief form to the real Athena Centre/AEO privacy policy.
+
+Remove prototype links using:
+
+#
+
+Do not leave non-functional privacy, information or navigation links.
+
+---
+
+# 29. HOMEPAGE DCM SECTION
+
+Update the existing homepage DCM section.
+
+Replace:
+
+Democratic Competitiveness Monitor
+
+with:
+
+Democratic Competitiveness Map
+
+The homepage should show a simplified latest DCM preview, not the entire historical interface.
+
+The homepage CTA should continue linking to:
+
+/democratic-competitiveness-map
+
+Suggested CTA:
+
+View Full DCM
+
+or:
+
+Explore the DCM
+
+---
+
+# 30. MOBILE AND RESPONSIVE DESIGN
+
+Make the new DCM experience fully responsive.
+
+Desktop:
+
+- Map should remain prominent.
+- Historical and publication information should be easy to compare.
+- Avoid excessive whitespace.
+- State information should appear beside or below the map appropriately.
+
+Tablet:
+
+- Adapt the map and information panels cleanly.
+- Ensure controls remain readable.
+
+Mobile:
+
+Stack:
+
+Year
+Month
+Publication Period
+State
+
+vertically where necessary.
+
+Make controls full width where appropriate.
+
+Ensure:
+
+- Map states remain tappable.
+- Small state labels are not the only method of identifying states.
+- Selected-state information appears clearly below the map.
+- Timeline is touch friendly.
+- No horizontal page overflow.
+- Buttons remain easily tappable.
+- Text remains legible.
+
+Do not use extremely small state label text.
+
+---
+
+# 31. ACCESSIBILITY
+
+Ensure:
+
+- Map states can be accessed using keyboard navigation.
+- Map states have accessible names.
+- State classification is available to screen readers.
+- Colour is not the only way classification information is communicated.
+- Selected states have visual and semantic indicators.
+- Form fields have proper labels.
+- Select controls are labelled.
+- Focus states are clearly visible.
+- Buttons are keyboard accessible.
+- Contrast meets reasonable accessibility standards.
+- Timeline periods have accessible labels.
+
+Example map accessible label:
+
+“Kaduna — Constrained — Reporting period 1 to 15 October 2026.”
+
+---
+
+# 32. SEO
+
+Update metadata for the existing DCM route.
+
+Suggested page title:
+
+Democratic Competitiveness Map (DCM) | Athena Election Observatory
+
+Suggested meta description:
+
+Explore AEO’s Democratic Competitiveness Map, a state-by-state evidence-based outlook of the conditions under which political competition occurs across Nigeria.
+
+Update:
+
+- Page title
+- Meta description
+- Open Graph title
+- Open Graph description
+- Social sharing metadata
+- Structured data where appropriate
+
+Do not change the canonical URL.
+
+---
+
+# 33. EXISTING AEO WEBSITE INTEGRATION
+
+Preserve the existing:
+
+- Header
+- Main navigation
+- DCM main-menu item
+- Mobile navigation
+- Footer
+- Brand styling
+- Typography
+- Site-wide spacing system
+- Existing reusable components
+- Analytics
+- SEO architecture
+- Routing system
+- Authentication/admin architecture where relevant
+
+The DCM page must feel like a native AEO page.
+
+It must not look like a standalone prototype pasted into the site.
+
+---
+
+# 34. DO NOT LOSE EXISTING FUNCTIONALITY
+
+Before replacing the existing DCM page:
+
+Identify any:
+
+- Existing analytics events
+- Internal links
+- Metadata
+- Routes
+- Components
+- API calls
+- CMS dependencies
+- Search indexing dependencies
+
+Preserve anything still required.
+
+Do not delete reusable components unnecessarily.
+
+---
+
+# 35. DATA MIGRATION
+
+If the current DCM page already contains real classification information, do not discard it.
+
+Where possible:
+
+- Migrate existing DCM publication data into the new structured publication format.
+- Preserve historical information.
+- Map old classifications to the new classification structure carefully.
+- Preserve publication dates and reporting periods.
+
+If any old data cannot be mapped safely, flag it for review rather than inventing values.
+
+---
+
+# 36. MAP DATA SHOULD NOT BE HARDCODED PER PUBLICATION
+
+The Nigeria SVG/map geometry can remain part of the frontend.
+
+However:
+
+Do not hard-code publication classifications directly into frontend component files.
+
+The map should receive classification data from the structured DCM publication data source.
+
+Adding a new publication should not require a frontend deployment if the existing infrastructure supports database/CMS-driven data.
+
+---
+
+# 37. LATEST PUBLICATION LOGIC
+
+Only one publication should normally be treated as the current/latest public DCM.
+
+When a new publication is marked as latest:
+
+- Remove latest status from the previous current publication automatically where appropriate.
+- Make the new publication the default public map.
+- Preserve all previous publications in history.
+
+Do not delete older publications.
+
+---
+
+# 38. SAFE ERROR STATES
+
+If publication data fails to load:
+
+Do not display incorrect classifications.
+
+Show a safe message such as:
+
+“DCM publication data is temporarily unavailable.”
+
+If one state record is unexpectedly missing:
+
+Do not classify it automatically as Insufficient evidence.
+
+Flag the data issue.
+
+---
+
+# 39. LOADING AND PERFORMANCE
+
+Optimise the interactive map for normal web performance.
+
+Avoid unnecessary rerendering.
+
+The historical data should load efficiently.
+
+Display appropriate loading states when data is being fetched.
+
+Do not block the rest of the AEO website while map data loads.
+
+---
+
+# 40. TESTING
+
+Test all major DCM scenarios.
+
+Test:
+
+- Latest publication
+- Baseline publication
+- Historical publication
+- Year selection
+- Month selection
+- Period selection
+- State selection
+- All States mode
+- Map state click
+- Change highlighting
+- State history
+- Publication comparison
+- First classification
+- Changed classification
+- Unchanged classification
+- Insufficient evidence
+- Missing publication period
+- Missing state data
+- Duplicate state data
+- Invalid import
+- Valid Excel/CSV import
+- Draft publication
+- Scheduled publication
+- Published publication
+- Archived publication
+- Revision of existing publication
+- DCM Brief form
+- Privacy link
+- Homepage DCM link
+- Main navigation DCM link
+- Direct route access
+- Browser refresh on the DCM route
+- Mobile
+- Tablet
+- Desktop
+- Keyboard navigation
+- Screen-reader labels
+- Loading/error states
+
+---
+
+# 41. ADMIN TESTING
+
+Specifically test the admin workflow:
+
+1. Create publication.
+2. Enter publication metadata.
+3. Fill classifications manually.
+4. Upload classifications from CSV/Excel.
+5. Attempt publication with missing state.
+6. Attempt publication with duplicate state.
+7. Attempt publication with invalid classification.
+8. Verify publication validation.
+9. Preview publication.
+10. Publish.
+11. Confirm public map updates.
+12. Confirm historical timeline updates.
+13. Confirm “What changed” updates.
+14. Edit published classification.
+15. Confirm historical comparisons recalculate.
+16. Add revision note.
+17. Verify revision information publicly where appropriate.
+
+---
+
+# 42. FINAL IMPLEMENTATION REPORT
+
+After completing the work, provide a concise implementation report containing:
+
+1. Files/components modified
+
+2. Existing components retained
+
+3. New components created
+
+4. Database/CMS data structure implemented
+
+5. Publication data-entry workflow
+
+6. 37-jurisdiction validation logic
+
+7. Excel/CSV import implementation
+
+8. Downloadable admin template implementation
+
+9. Historical publication logic
+
+10. State-history generation logic
+
+11. Previous-publication comparison logic
+
+12. “What changed” generation logic
+
+13. Right of Response handling
+
+14. DCM Brief backend integration
+
+15. Homepage updates
+
+16. Navigation updates
+
+17. SEO updates
+
+18. Responsive/mobile improvements
+
+19. Accessibility improvements
+
+20. Existing data migrated
+
+21. Any remaining placeholders
+
+22. Any remaining backend dependencies
+
+23. Any implementation limitations
+
+---
+
+# 43. CRITICAL IMPLEMENTATION PRINCIPLES
+
+Do not:
+
+- Create a second DCM page.
+- Change the existing DCM URL.
+- Hard-code new publication records inside frontend JavaScript.
+- Treat missing data as Insufficient evidence.
+- Require researchers to edit code.
+- Leave placeholder text publicly visible.
+- Leave non-working # links.
+- Store arbitrary classification labels.
+- Allow incomplete publications to go live.
+- Delete historical publications when a new one is added.
+- Embed the supplied prototype as an iframe.
+
+Do:
+
+- Replace the current DCM page.
+- Preserve the existing route.
+- Rebuild the prototype natively.
+- Use structured publication data.
+- Provide a simple CMS/admin workflow.
+- Provide manual entry and Excel/CSV upload.
+- Validate all 37 jurisdictions.
+- Derive historical comparisons automatically.
+- Preserve historical publications.
+- Keep the DCM disclaimer prominent.
+- Make future DCM publication updates easy for non-technical staff.
+
+The intended long-term workflow should be simple:
+
+Create publication → Fill metadata → Upload/fill 37 classifications → Validate → Preview → Publish.
+
+Once published, the website should automatically handle:
+
+- Current map
+- Historical map
+- State history
+- Publication selectors
+- Classification changes
+- “What changed”
+- Publication metadata
+
+without requiring frontend code changes.
