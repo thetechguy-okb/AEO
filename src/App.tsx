@@ -118,6 +118,9 @@ export default function App() {
   let seo = null;
 
   if (
+    path === '/democratic-competitiveness-map' ||
+    path === '/publications/democratic-competitiveness-map' ||
+    path === '/dcm' ||
     path === '/dcm-preview' ||
     path === '/dcm-internal' ||
     path === '/democratic-competitiveness-map-preview' ||
@@ -125,9 +128,9 @@ export default function App() {
   ) {
     seo = (
       <SEO 
-        title="Democratic Competitiveness Map (DCM) | Preview" 
-        description="Explore AEO’s state-by-state outlook of the conditions under which political competition occurs in Nigeria." 
-        canonicalPath="/dcm-preview" 
+        title="Democratic Competitiveness Map (DCM) | Athena Election Observatory" 
+        description="Evidence-based classifications of the practical conditions for political competition across Nigeria's 36 states and the Federal Capital Territory, updated bi-monthly." 
+        canonicalPath="/democratic-competitiveness-map" 
       />
     );
     content = <DcmPreview />;
@@ -151,8 +154,6 @@ export default function App() {
     path === '/reports-and-briefs' ||
     path === '/reports-briefs' ||
     path === '/political-landscape-monitor' ||
-    path === '/democratic-competitiveness-map' ||
-    path === '/publications/democratic-competitiveness-map' ||
     path === '/africa-election-watch' ||
     path === '/aeo-weekly-digest' ||
     path === '/announcements'
@@ -161,8 +162,6 @@ export default function App() {
       seo = <SEO title="Reports and Briefs" description="Access our full registry of forensic election audits, sub-national tech assessments, and policy research briefs." canonicalPath="/publications/reports-and-briefs" />;
     } else if (path === '/political-landscape-monitor' || path === '/publications/political-landscape-monitor') {
       seo = <SEO title="Political Landscape Monitor" description="Sub-national technological assessments and electoral health monitoring across Nigerian states." canonicalPath="/publications/political-landscape-monitor" />;
-    } else if (path === '/democratic-competitiveness-map' || path === '/publications/democratic-competitiveness-map') {
-      seo = <SEO title="Democratic Competitiveness Map (DCM)" description="AEO’s state-by-state outlook of the conditions under which political competition occurs in Nigeria." canonicalPath="/democratic-competitiveness-map" />;
     } else if (path === '/africa-election-watch' || path === '/publications/africa-election-watch') {
       seo = <SEO title="Africa Election Watch" description="Cross-border electoral monitoring, comparative regional research, and democratic health assessments across African nations." canonicalPath="/publications/africa-election-watch" />;
     } else if (path === '/aeo-weekly-digest' || path === '/publications/aeo-weekly-digest') {

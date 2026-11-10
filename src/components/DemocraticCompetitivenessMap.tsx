@@ -3,7 +3,7 @@ import {
   Award, FileText, ArrowRight, AlertCircle, Info, CheckCircle2, 
   ExternalLink, ShieldCheck, Download, Layers
 } from 'lucide-react';
-import { FlourishMap } from './FlourishMap';
+import { DcmPreview } from './DcmPreview';
 import { DcmBriefRequestModal } from './DcmBriefRequestModal';
 import { DemocraticCompetitivenessMapNative } from './DemocraticCompetitivenessMapNative';
 
@@ -92,13 +92,9 @@ export const DemocraticCompetitivenessMap: React.FC = () => {
             </div>
           </div>
 
-          {/* Flourish Embed */}
-          <div className="w-full bg-paper rounded-2xl border border-line p-2 sm:p-4 overflow-hidden">
-            <FlourishMap 
-              id="30596006"
-              height="h-[650px] sm:h-[800px] lg:h-[880px]"
-              title="AEO Democratic Competitiveness Map"
-            />
+          {/* Native DCM Map Embed */}
+          <div className="w-full">
+            <DcmPreview isEmbedded={true} />
           </div>
 
           {/* Methodology Notice below map */}

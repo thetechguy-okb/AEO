@@ -5,7 +5,7 @@ import { formatReportDate, parseDateValue, sortItemsByDate } from '../utils/date
 import { getItemSlug } from '../utils/url';
 import DiaryElectionDetail from './DiaryElectionDetail';
 import { DiaryItem } from '../types';
-import { FlourishMap } from './FlourishMap';
+import { DcmPreview } from './DcmPreview';
 
 export const triggerPdfDownload = async (title: string, summary: string, author: string, date: string, pdfUrl?: string, customContent?: string) => {
   if (pdfUrl) {
@@ -568,12 +568,8 @@ export default function PublicationsPage() {
                 </p>
               </div>
 
-              <div className="w-full overflow-hidden rounded-xl border border-line bg-paper p-2 sm:p-4">
-                <FlourishMap 
-                  id="30596006"
-                  height="h-[550px] sm:h-[650px] lg:h-[750px]"
-                  title="AEO Democratic Competitiveness Map"
-                />
+              <div className="w-full">
+                <DcmPreview isEmbedded={true} />
               </div>
 
               <div className="text-xs text-mut leading-relaxed italic border-t border-line pt-4">

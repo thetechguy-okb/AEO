@@ -4,7 +4,7 @@ import {
   Calendar, ShieldCheck, X, ChevronRight, CreditCard
 } from 'lucide-react';
 import { PartyLogo } from './PartyLogo';
-import { FlourishMap } from './FlourishMap';
+import { DcmPreview } from './DcmPreview';
 import { db } from '../lib/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { handleFirestoreError, OperationType } from '../lib/firebaseError';
@@ -317,46 +317,11 @@ export default function LiveDashboard({ isPreview = false }: LiveDashboardProps)
           </>
         )}
 
-        {/* Homepage Preview Map replacing Elections Observatory text */}
+        {/* Homepage Preview Map replacing Flourish map with Native DCM Map */}
         {isPreview && (
-          <div className="bg-white border border-line rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div className="space-y-1">
-                <span className="text-xs font-mono font-bold tracking-widest text-brand-blue uppercase">
-                  Interactive Map Visualization
-                </span>
-                <h2 className="font-display font-bold text-2xl sm:text-3xl text-ink">
-                  Democratic Competitiveness Map (DCM)
-                </h2>
-              </div>
-              <div>
-                <a 
-                  href="/democratic-competitiveness-map"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    window.history.pushState({}, '', '/democratic-competitiveness-map');
-                    window.dispatchEvent(new PopStateEvent('popstate'));
-                  }}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-brand-blue hover:bg-brand-blue-dark text-white text-xs font-bold rounded-lg shadow-sm transition-all cursor-pointer"
-                >
-                  View Full DCM Page
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </div>
-
-            <p className="text-ink2 text-sm sm:text-base leading-relaxed max-w-4xl">
-              Nigeria’s political competition environment remains uneven, with concerns concentrated around political mobilisation, campaign access and institutional neutrality as the 2027 elections approach.
-            </p>
-
-            <div className="w-full overflow-hidden rounded-xl border border-line bg-paper p-2 sm:p-4">
-              <FlourishMap 
-                id="30596006"
-                height="h-[550px] sm:h-[650px] lg:h-[720px]"
-                title="AEO Democratic Competitiveness Map"
-              />
-            </div>
-          </div>
+          <section aria-label="Democratic Competitiveness Map Overview" className="w-full">
+            <DcmPreview isEmbedded={true} />
+          </section>
         )}
 
         {/* =========================================================================

@@ -657,13 +657,13 @@ export const DcmCmsManager: React.FC = () => {
               </button>
 
               <a
-                href="/dcm-preview"
+                href="/democratic-competitiveness-map"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 rounded-xl text-xs font-mono font-bold tracking-wider uppercase transition-all shadow-xs cursor-pointer shrink-0"
               >
                 <Eye className="w-3.5 h-3.5 text-brand-blue" />
-                <span>Preview Hidden Native DCM</span>
+                <span>View Live DCM Map</span>
               </a>
 
               <button

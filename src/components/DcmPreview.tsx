@@ -302,7 +302,11 @@ const CLASS_TO_CODE: Record<string, string> = {
   'Insufficient evidence': 'X'
 };
 
-export const DcmPreview: React.FC = () => {
+export interface DcmPreviewProps {
+  isEmbedded?: boolean;
+}
+
+export const DcmPreview: React.FC<DcmPreviewProps> = ({ isEmbedded = false }) => {
   const { dcmPublications } = useCMS();
 
   // Combine dynamic CMS publications (if available) with fallback prototype publications
@@ -351,8 +355,15 @@ export const DcmPreview: React.FC = () => {
     }
   }, [allPubs.length, pi]);
 
-  // Selected state on map/dropdown (defaults to null so no state is clicked by default)
-  const [sel, setSel] = useState<string | null>(null);
+  // Selected state on map/dropdown (defaults to null so no state is clicked by default unless specified in URL)
+  const [sel, setSel] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const st = params.get('state');
+      if (st) return st;
+    }
+    return null;
+  });
   // Hovered state for interactive Flourish tooltip card
   const [hoveredState, setHoveredState] = useState<{
     name: string;
@@ -874,49 +885,131 @@ export const DcmPreview: React.FC = () => {
       style={{
         fontFamily: "'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
         color: '#1c232b',
-        background: '#f3f4f6',
-        minHeight: '100vh'
+        background: isEmbedded ? 'transparent' : '#f3f4f6',
+        minHeight: isEmbedded ? 'auto' : '100vh'
       }}
     >
 
       {/* Main Container */}
       <div
         style={{
-          maxWidth: '1320px',
+          maxWidth: isEmbedded ? '100%' : '1320px',
           margin: '0 auto',
-          padding: '32px 24px 56px',
+          padding: isEmbedded ? '0 0 16px' : '32px 24px 56px',
           boxSizing: 'border-box',
           display: 'flex',
           flexDirection: 'column',
           gap: '24px'
         }}
       >
-        {/* Page Header */}
-        <header style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <h1
+        {/* Header Block */}
+        {!isEmbedded ? (
+          <header style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <h1
+              style={{
+                margin: 0,
+                fontSize: '34px',
+                lineHeight: 1.15,
+                fontWeight: 700,
+                letterSpacing: '-0.02em',
+                color: '#1c232b'
+              }}
+            >
+              Democratic Competitiveness Map
+            </h1>
+            <p
+              style={{
+                margin: 0,
+                fontSize: '17px',
+                lineHeight: 1.5,
+                color: '#3d4752',
+                maxWidth: '760px'
+              }}
+            >
+              Evidence-based classifications of the practical conditions for political competition in the 36 states and the FCT, published twice a month. Use the panel to view any past map or follow one state through the year.
+            </p>
+          </header>
+        ) : (
+          <div
             style={{
-              margin: 0,
-              fontSize: '34px',
-              lineHeight: 1.15,
-              fontWeight: 700,
-              letterSpacing: '-0.02em',
-              color: '#1c232b'
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '16px',
+              paddingBottom: '4px'
             }}
           >
-            Democratic Competitiveness Map
-          </h1>
-          <p
-            style={{
-              margin: 0,
-              fontSize: '17px',
-              lineHeight: 1.5,
-              color: '#3d4752',
-              maxWidth: '760px'
-            }}
-          >
-            Evidence-based classifications of the practical conditions for political competition in the 36 states and the FCT, published twice a month. Use the panel to view any past map or follow one state through the year.
-          </p>
-        </header>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <span
+                style={{
+                  fontSize: '11px',
+                  fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+                  fontWeight: 700,
+                  letterSpacing: '0.08em',
+                  color: '#1f5fa8',
+                  textTransform: 'uppercase'
+                }}
+              >
+                Interactive Map Visualization
+              </span>
+              <h2
+                style={{
+                  margin: 0,
+                  fontSize: '28px',
+                  fontWeight: 700,
+                  color: '#1c232b',
+                  letterSpacing: '-0.02em',
+                  lineHeight: 1.2
+                }}
+              >
+                Democratic Competitiveness Map (DCM)
+              </h2>
+              <p
+                style={{
+                  margin: '4px 0 0',
+                  fontSize: '15px',
+                  color: '#475569',
+                  maxWidth: '840px',
+                  lineHeight: 1.55
+                }}
+              >
+                Nigeria’s political competition environment remains uneven, with concerns concentrated around political mobilisation, campaign access and institutional neutrality as the 2027 elections approach.
+              </p>
+            </div>
+            <div>
+              <a
+                href="/democratic-competitiveness-map"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.history.pushState({}, '', '/democratic-competitiveness-map');
+                  window.dispatchEvent(new PopStateEvent('popstate'));
+                  window.scrollTo(0, 0);
+                }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '10px 18px',
+                  background: '#1f5fa8',
+                  color: '#ffffff',
+                  borderRadius: '8px',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  textDecoration: 'none',
+                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                  cursor: 'pointer',
+                  transition: 'background 0.15s ease'
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = '#174880'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = '#1f5fa8'; }}
+              >
+                <span>View Full DCM Page</span>
+                <span style={{ fontSize: '14px' }}>→</span>
+              </a>
+            </div>
+          </div>
+        )}
 
         {/* Changes Since the Previous Publication Card (Exact recreation of reference screenshot) */}
         <section
@@ -2165,6 +2258,50 @@ export const DcmPreview: React.FC = () => {
             </p>
           </aside>
         </div>
+
+        {/* Embedded Mode Footer Banner */}
+        {isEmbedded && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '12px',
+              padding: '16px 22px',
+              background: '#ffffff',
+              border: '1px solid #d5d9de',
+              borderRadius: '8px',
+              boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)'
+            }}
+          >
+            <div style={{ fontSize: '14px', color: '#334155', lineHeight: 1.5 }}>
+              <strong style={{ color: '#0f172a' }}>Explore full dataset:</strong> View all historical bi-monthly publications, inspect detailed evidentiary rationales for all 37 jurisdictions, and request official briefs.
+            </div>
+            <a
+              href="/democratic-competitiveness-map"
+              onClick={(e) => {
+                e.preventDefault();
+                window.history.pushState({}, '', '/democratic-competitiveness-map');
+                window.dispatchEvent(new PopStateEvent('popstate'));
+                window.scrollTo(0, 0);
+              }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                color: '#1f5fa8',
+                fontSize: '13px',
+                fontWeight: 700,
+                textDecoration: 'none',
+                cursor: 'pointer'
+              }}
+            >
+              <span>Explore Complete DCM Archive</span>
+              <span>→</span>
+            </a>
+          </div>
+        )}
 
         {/* Modal Dialog: Request the DCM Brief */}
         {formOpen && (
