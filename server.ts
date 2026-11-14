@@ -5,7 +5,7 @@ import { createServer as createViteServer } from 'vite';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { getHealthPayload, processDcmBriefRequest } from './lib/dcmEmailService';
+import { getHealthPayload, processDcmBriefRequest } from './lib/dcmEmailService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'http';
-import { processDcmBriefRequest } from '../lib/dcmEmailService';
+import { processDcmBriefRequest } from '../lib/dcmEmailService.js';
 
 const MAX_BODY_BYTES = 32 * 1024; // 32kb limit
 

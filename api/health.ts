@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'http';
-import { getHealthPayload } from '../lib/dcmEmailService';
+import { getHealthPayload } from '../lib/dcmEmailService.js';
 
 export default async function handler(req: IncomingMessage, res: ServerResponse): Promise<void> {
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
