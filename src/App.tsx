@@ -126,11 +126,12 @@ export default function App() {
     path === '/democratic-competitiveness-map-preview' ||
     path === '/democratic-competitiveness-map/preview'
   ) {
+    const isDcmPreviewOnly = path === '/dcm-preview';
     seo = (
       <SEO 
-        title="Democratic Competitiveness Map (DCM) | Athena Election Observatory" 
+        title={isDcmPreviewOnly ? "Democratic Competitiveness Map (DCM) | Preview" : "Democratic Competitiveness Map (DCM) | Athena Election Observatory"} 
         description="Evidence-based classifications of the practical conditions for political competition across Nigeria's 36 states and the Federal Capital Territory, updated bi-monthly." 
-        canonicalPath="/democratic-competitiveness-map" 
+        canonicalPath={isDcmPreviewOnly ? "/dcm-preview" : "/democratic-competitiveness-map"} 
       />
     );
     content = <DcmPreview />;

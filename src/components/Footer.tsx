@@ -166,8 +166,8 @@ export default function Footer() {
               </li>
               <li className="flex items-start gap-2">
                 <Mail className="w-4 h-4 text-brand-purple shrink-0 mt-0.5" />
-                <a href="mailto:info.centre@athenacentre.org" className="hover:text-white transition-colors">
-                  info.centre@athenacentre.org
+                <a href="mailto:aeo@athenacentre.org" className="hover:text-white transition-colors">
+                  aeo@athenacentre.org
                 </a>
               </li>
               <li className="flex items-start gap-2">

@@ -1,15 +1,18 @@
+import 'dotenv/config';
 import express from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import { createServer as createViteServer } from 'vite';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { getHealthPayload, processDcmBriefRequest } from './lib/dcmEmailService';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-app.use(express.json());
+app.set('trust proxy', true);
+app.use(express.json({ limit: '32kb' }));
 
 // Load Firebase configuration
 const firebaseConfigPath = path.join(process.cwd(), 'firebase-applet-config.json');
@@ -376,13 +379,30 @@ async function auditOperation(params: {
 // ----------------------------------------------------
 
 // Health Check
-app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
-    timestamp: new Date().toISOString(),
-    env: process.env.NODE_ENV || 'development',
-    configLoaded: !!firebaseConfig.apiKey
+app.get('/api/health', (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store, max-age=0');
+  res.json(getHealthPayload(!!firebaseConfig.apiKey));
+});
+
+function getExpressClientIp(req: Request): string {
+  const realIp = req.headers['x-real-ip'];
+  if (typeof realIp === 'string' && realIp.trim()) {
+    return realIp.trim();
+  }
+  const forwarded = req.headers['x-forwarded-for'];
+  if (typeof forwarded === 'string' && forwarded.trim()) {
+    return forwarded.split(',')[0].trim();
+  }
+  return req.ip || req.socket?.remoteAddress || 'unknown';
+}
+
+app.post('/api/dcm-brief-request', async (req: Request, res: Response) => {
+  res.setHeader('Cache-Control', 'no-store, max-age=0');
+  const result = await processDcmBriefRequest({
+    body: req.body,
+    clientIp: getExpressClientIp(req)
   });
+  return res.status(result.statusCode).json(result.payload);
 });
 
 // GET /api/admin/users - List all administrators (Hydrated from Firestore database 'aeo19oct-clone')

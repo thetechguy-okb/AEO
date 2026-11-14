@@ -111,6 +111,7 @@ export interface DcmPubItem {
   year: number;
   month: number; // 0-indexed: 8 = Sept, 9 = Oct
   half: number;  // 0 = 1st-15th, 1 = 16th-end
+  pubTitle?: string;
   label: string;
   short: string;
   cutoff: string;
@@ -211,6 +212,7 @@ export const DCM_PUBS: DcmPubItem[] = [
     year: 2026,
     month: 5,
     half: 1,
+    pubTitle: 'Democratic Competitiveness Map',
     label: '16th – 30th June 2026',
     short: '16th – 30th June 2026',
     cutoff: '30 June 2026',
@@ -223,6 +225,7 @@ export const DCM_PUBS: DcmPubItem[] = [
     year: 2026,
     month: 8,
     half: 1,
+    pubTitle: 'Democratic Competitiveness Map',
     label: '1st July – 30th September 2026',
     short: '1st July – 30th September 2026',
     cutoff: '30 September 2026',
@@ -235,6 +238,7 @@ export const DCM_PUBS: DcmPubItem[] = [
     year: 2026,
     month: 9,
     half: 0,
+    pubTitle: 'Democratic Competitiveness Map',
     label: '1st – 15th October 2026',
     short: '1st – 15th October 2026',
     cutoff: '15 October 2026',
@@ -332,6 +336,7 @@ export const DcmPreview: React.FC<DcmPreviewProps> = ({ isEmbedded = false }) =>
           year: Number(pub.year) || 2026,
           month: (Number(pub.month) || 10) - 1,
           half: Number(pub.periodIndex) === 1 ? 0 : 1,
+          pubTitle: pub.title || 'Democratic Competitiveness Map',
           label: pub.reportingPeriodLabel || pub.title,
           short: pub.reportingPeriodLabel || pub.title,
           cutoff: pub.evidenceCutoffDate || '',
@@ -631,12 +636,15 @@ export const DcmPreview: React.FC<DcmPreviewProps> = ({ isEmbedded = false }) =>
   // Modal dialog states
   const [formOpen, setFormOpen] = useState<boolean>(false);
   const [formDone, setFormDone] = useState<boolean>(false);
+  const [formSubmitting, setFormSubmitting] = useState<boolean>(false);
+  const [formError, setFormError] = useState<string | null>(null);
   const [fName, setFName] = useState<string>('');
   const [fEmail, setFEmail] = useState<string>('');
   const [fOrg, setFOrg] = useState<string>('');
   const [fSector, setFSector] = useState<string>('');
   const [fUse, setFUse] = useState<string>('');
   const [fConsent, setFConsent] = useState<boolean>(false);
+  const [fWebsite, setFWebsite] = useState<string>('');
 
   const safePi = Math.min(Math.max(0, pi), allPubs.length - 1);
   const activePub = allPubs[safePi] || allPubs[allPubs.length - 1];
@@ -704,13 +712,23 @@ export const DcmPreview: React.FC<DcmPreviewProps> = ({ isEmbedded = false }) =>
     if (!changes.length) {
       return 'No state changed classification in this publication.';
     }
+    const numberWords = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'];
     const n = changes.length;
     const parts = changes.map((c) => {
+      let reason = (c.rationale || '').trim();
+      if (reason && reason !== 'No additional evidence recorded.') {
+        reason = reason.replace(/^Classification changed following\s+/i, '').replace(/\.+$/, '');
+        if (/^[A-Z][a-z]/.test(reason)) {
+          reason = reason.charAt(0).toLowerCase() + reason.slice(1);
+        }
+      } else {
+        reason = 'verified evidence in the decision record';
+      }
       return c.kind === 'First classification'
-        ? `${c.name} received its first classification, ${c.toCat}, after [one-line reason from the decision record].`
-        : `${c.name} moved from ${c.fromCat} to ${c.toCat} after [one-line reason from the decision record].`;
+        ? `${c.name} received its first classification, ${c.toCat}, after ${reason}.`
+        : `${c.name} moved from ${c.fromCat} to ${c.toCat} after ${reason}.`;
     });
-    const prefix = n === 1 ? 'One state' : n === 2 ? 'Two states' : `${n} states`;
+    const prefix = n === 1 ? 'One state' : n <= 10 ? `${numberWords[n]} states` : `${n} states`;
     return `${prefix} moved in this publication. ${parts.join(' ')} All other states are unchanged.`;
   }, [prevCls, changes]);
 
@@ -804,20 +822,68 @@ export const DcmPreview: React.FC<DcmPreviewProps> = ({ isEmbedded = false }) =>
   }, [allPubs, activePub.year, sel, safePi]);
 
   // Validation for form submission
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   const isEmailValid = emailRegex.test(fEmail.trim());
-  const canSubmit = Boolean(fName.trim() && isEmailValid && fSector && fConsent);
+  const canSubmit = Boolean(fName.trim().length >= 2 && isEmailValid && fSector && fConsent);
 
-  const handleSubmitBrief = (e: React.FormEvent) => {
+  const handleSubmitBrief = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (canSubmit) {
+    if (!canSubmit || formSubmitting) return;
+
+    setFormSubmitting(true);
+    setFormError(null);
+
+    try {
+      const response = await fetch('/api/dcm-brief-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName: fName.trim(),
+          email: fEmail.trim(),
+          organisation: fOrg.trim(),
+          sector: fSector,
+          intendedUse: fUse.trim(),
+          consent: fConsent,
+          publicationTitle: activePub.pubTitle || 'Democratic Competitiveness Map',
+          reportingPeriod: activePub.short || activePub.label,
+          selectedState: sel || 'All States',
+          submittedAt: new Date().toISOString(),
+          website: fWebsite
+        })
+      });
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok || !data?.success) {
+        setFormError(
+          data?.error || 'Unable to submit your DCM Brief request right now. Please try again later.'
+        );
+        return;
+      }
+
       setFormDone(true);
+    } catch {
+      setFormError('Network error while sending your request. Your entries have been preserved — please try again.');
+    } finally {
+      setFormSubmitting(false);
     }
   };
 
   const handleCloseModal = () => {
+    if (formSubmitting) return;
+    const wasDone = formDone;
     setFormOpen(false);
     setFormDone(false);
+    setFormError(null);
+    if (wasDone) {
+      setFName('');
+      setFEmail('');
+      setFOrg('');
+      setFSector('');
+      setFUse('');
+      setFConsent(false);
+      setFWebsite('');
+    }
   };
 
   // Change selector handlers
@@ -1011,208 +1077,43 @@ export const DcmPreview: React.FC<DcmPreviewProps> = ({ isEmbedded = false }) =>
           </div>
         )}
 
-        {/* Changes Since the Previous Publication Card (Exact recreation of reference screenshot) */}
-        <section
-          aria-label="Changes since the previous publication"
-          style={{
-            background: '#ffffff',
-            border: '1px solid #e2e8f0',
-            borderRadius: '12px',
-            padding: '24px 28px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '16px',
-            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)'
-          }}
-        >
-          {/* Header Row */}
-          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', borderBottom: '1px solid #f1f5f9', paddingBottom: '14px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
-              <h2
-                style={{
-                  margin: 0,
-                  fontSize: '24px',
-                  fontWeight: 700,
-                  color: '#0f172a',
-                  letterSpacing: '-0.015em'
-                }}
-              >
-                Changes Since the Previous Publication
-              </h2>
-              {changes.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setShowChanges(!showChanges)}
-                  style={{
-                    font: 'inherit',
-                    fontSize: '12px',
-                    fontWeight: 600,
-                    padding: '4px 10px',
-                    borderRadius: '4px',
-                    border: showChanges ? '1.5px solid #0f172a' : '1px solid #cbd5e1',
-                    background: showChanges ? '#0f172a' : '#ffffff',
-                    color: showChanges ? '#ffffff' : '#475569',
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px'
-                  }}
-                >
-                  <span>{showChanges ? '✓ Highlighting changes' : 'Highlight on map'}</span>
-                </button>
-              )}
-            </div>
-            {prevPub && (
-              <span
-                style={{
-                  fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
-                  fontSize: '13px',
-                  color: '#475569'
-                }}
-              >
-                Compared against: <strong style={{ color: '#0f172a', fontWeight: 600 }}>{prevPub.short || prevPub.label}</strong>
-              </span>
-            )}
-          </div>
-
-          {/* Subheading Lead */}
-          <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.6, color: '#334155' }}>
-            {changes.length > 0 ? (
-              <>
-                <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace', fontWeight: 700, color: '#0f172a' }}>
-                  {changes.length} {changes.length === 1 ? 'jurisdiction' : 'jurisdictions'}
-                </span>
-                {' '}changed classification between{' '}
-                <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace', fontWeight: 600, color: '#0f172a' }}>
-                  {prevPub?.short || prevPub?.label || 'previous publication'}
-                </span>
-                {' '}and{' '}
-                <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace', fontWeight: 600, color: '#0f172a' }}>
-                  {activePub.short || activePub.label}
-                </span>:
-              </>
-            ) : (
-              <span>No jurisdictions changed classification between {prevPub?.short || 'previous publication'} and {activePub.short}. All jurisdictions remain unchanged.</span>
-            )}
-          </p>
-
-          {/* Three-Column Changed State Cards Grid */}
-          {changes.length > 0 && (
-            <div
+        {/* What changed in this publication summary card */}
+        {!isEmbedded && (
+          <section
+            aria-label="What changed in this publication"
+            style={{
+              background: '#ffffff',
+              border: '1px solid #d5d9de',
+              borderRadius: '6px',
+              padding: '20px 24px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px'
+            }}
+          >
+            <h2
               style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                gap: '16px',
-                marginTop: '4px'
+                margin: 0,
+                fontSize: '18px',
+                fontWeight: 700,
+                color: '#1c232b',
+                lineHeight: 1.3
               }}
             >
-              {changes.map((c) => {
-                const isCardSelected = sel === c.name;
-                const toPillStyles: Record<string, { bg: string; border: string; text: string }> = {
-                  'Constrained': { bg: '#ffedd5', border: '#fed7aa', text: '#9a3412' },
-                  'Emerging concern': { bg: '#fef3c7', border: '#fde68a', text: '#92400e' },
-                  'Severely constrained': { bg: '#fee2e2', border: '#fecaca', text: '#991b1b' },
-                  'Open': { bg: '#dcfce7', border: '#bbf7d0', text: '#166534' },
-                  'Insufficient evidence': { bg: '#f1f5f9', border: '#e2e8f0', text: '#334155' }
-                };
-                const toStyle = toPillStyles[c.toCat] || { bg: '#ffedd5', border: '#fed7aa', text: '#9a3412' };
-
-                return (
-                  <div
-                    key={c.name}
-                    onClick={() => selectState(c.name, true)}
-                    style={{
-                      background: isCardSelected ? '#ffffff' : '#fcfdfd',
-                      border: isCardSelected ? '2px solid #2563eb' : '1px solid #e2e8f0',
-                      borderRadius: '12px',
-                      padding: '18px 20px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '12px',
-                      cursor: 'pointer',
-                      transition: 'border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease',
-                      boxShadow: isCardSelected ? '0 4px 14px rgba(37, 99, 235, 0.14)' : '0 1px 2px rgba(0,0,0,0.03)',
-                      outline: 'none'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isCardSelected) {
-                        e.currentTarget.style.borderColor = '#cbd5e1';
-                        e.currentTarget.style.background = '#ffffff';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isCardSelected) {
-                        e.currentTarget.style.borderColor = '#e2e8f0';
-                        e.currentTarget.style.background = '#fcfdfd';
-                      }
-                    }}
-                  >
-                    {/* Top Row: State Name + Inspect Link */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a' }}>
-                        {c.name}
-                      </span>
-                      <span
-                        style={{
-                          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
-                          fontSize: '11px',
-                          fontWeight: 700,
-                          color: '#2563eb',
-                          letterSpacing: '0.04em'
-                        }}
-                      >
-                        INSPECT ON MAP →
-                      </span>
-                    </div>
-
-                    {/* Classification Transition Pills */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                      <span
-                        style={{
-                          fontSize: '12px',
-                          fontWeight: 500,
-                          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
-                          padding: '3px 8px',
-                          borderRadius: '4px',
-                          background: '#f1f5f9',
-                          border: '1px solid #e2e8f0',
-                          color: '#334155'
-                        }}
-                      >
-                        {c.fromCat}
-                      </span>
-                      <span style={{ color: '#94a3b8', fontSize: '13px' }}>→</span>
-                      <span
-                        style={{
-                          fontSize: '12px',
-                          fontWeight: 600,
-                          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
-                          padding: '3px 8px',
-                          borderRadius: '4px',
-                          background: toStyle.bg,
-                          border: `1px solid ${toStyle.border}`,
-                          color: toStyle.text
-                        }}
-                      >
-                        {c.toCat}
-                      </span>
-                    </div>
-
-                    {/* Rationale Paragraph */}
-                    <p style={{ margin: 0, fontSize: '13px', lineHeight: 1.5, color: '#475569', flex: '1 1 auto' }}>
-                      {c.rationale}
-                    </p>
-
-                    {/* Footer Row: Right of response */}
-                    <div style={{ fontSize: '12px', color: '#64748b', borderTop: '1px solid #f1f5f9', paddingTop: '10px' }}>
-                      Right of response: <strong style={{ color: '#0f172a' }}>{c.rightOfResponse || 'Requested'}</strong>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </section>
+              What changed in this publication ({summaryPeriod})
+            </h2>
+            <p
+              style={{
+                margin: 0,
+                fontSize: '15px',
+                lineHeight: 1.55,
+                color: '#3d4752'
+              }}
+            >
+              {summaryText}
+            </p>
+          </section>
+        )}
 
         {/* Two Column Layout: Map Section + Aside Controls */}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '24px', alignItems: 'flex-start' }}>
@@ -2251,8 +2152,20 @@ export const DcmPreview: React.FC<DcmPreviewProps> = ({ isEmbedded = false }) =>
             </button>
 
             <p style={{ margin: '-12px 0 0', fontSize: '14px', textAlign: 'center', color: '#3d4752' }}>
-              Seen something we may have missed?{' '}
-              <a href="mailto:info@athenacentre.org?subject=DCM%20Observation" style={{ color: '#1f5fa8', fontWeight: 600 }}>
+              Seen something we may have missed?
+              <br />
+              <a
+                href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=wNynuw5quEuIVaAKwkD2XQCOpLjLwJxLukh_kFKHtNRUNk1TODY5NTBINFE3VE5HT0kxSFNQWEtXNy4u"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-block',
+                  marginTop: '4px',
+                  fontSize: '16px',
+                  fontWeight: 700,
+                  color: '#1f5fa8'
+                }}
+              >
                 Tell us
               </a>
             </p>
@@ -2350,6 +2263,29 @@ export const DcmPreview: React.FC<DcmPreviewProps> = ({ isEmbedded = false }) =>
                     </p>
                   </div>
 
+                  {/* Honeypot field for automated spam protection */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      left: '-10000px',
+                      width: '1px',
+                      height: '1px',
+                      overflow: 'hidden'
+                    }}
+                    aria-hidden="true"
+                  >
+                    <label htmlFor="dcm-f-website">Website</label>
+                    <input
+                      id="dcm-f-website"
+                      name="website"
+                      type="text"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={fWebsite}
+                      onChange={(e) => setFWebsite(e.target.value)}
+                    />
+                  </div>
+
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     <label htmlFor="dcm-f-name" style={{ fontSize: '14px', fontWeight: 600 }}>
                       Full name <span style={{ color: '#8f1d17' }}>*</span>
@@ -2358,6 +2294,7 @@ export const DcmPreview: React.FC<DcmPreviewProps> = ({ isEmbedded = false }) =>
                       id="dcm-f-name"
                       type="text"
                       required
+                      disabled={formSubmitting}
                       autoComplete="name"
                       value={fName}
                       onChange={(e) => setFName(e.target.value)}
@@ -2382,6 +2319,7 @@ export const DcmPreview: React.FC<DcmPreviewProps> = ({ isEmbedded = false }) =>
                       id="dcm-f-email"
                       type="email"
                       required
+                      disabled={formSubmitting}
                       autoComplete="email"
                       value={fEmail}
                       onChange={(e) => setFEmail(e.target.value)}
@@ -2397,7 +2335,7 @@ export const DcmPreview: React.FC<DcmPreviewProps> = ({ isEmbedded = false }) =>
                       }}
                     />
                     <span style={{ fontSize: '13px', color: '#3d4752' }}>
-                      We will send the brief to this address.
+                      The AEO team will contact you at this address regarding your request.
                     </span>
                   </div>
 
@@ -2408,6 +2346,7 @@ export const DcmPreview: React.FC<DcmPreviewProps> = ({ isEmbedded = false }) =>
                     <input
                       id="dcm-f-org"
                       type="text"
+                      disabled={formSubmitting}
                       autoComplete="organization"
                       value={fOrg}
                       onChange={(e) => setFOrg(e.target.value)}
@@ -2431,6 +2370,7 @@ export const DcmPreview: React.FC<DcmPreviewProps> = ({ isEmbedded = false }) =>
                     <select
                       id="dcm-f-sector"
                       required
+                      disabled={formSubmitting}
                       value={fSector}
                       onChange={(e) => setFSector(e.target.value)}
                       style={{
@@ -2458,6 +2398,7 @@ export const DcmPreview: React.FC<DcmPreviewProps> = ({ isEmbedded = false }) =>
                     <textarea
                       id="dcm-f-use"
                       rows={3}
+                      disabled={formSubmitting}
                       value={fUse}
                       onChange={(e) => setFUse(e.target.value)}
                       placeholder="e.g. Research, civic voter awareness, news reporting..."
@@ -2480,23 +2421,42 @@ export const DcmPreview: React.FC<DcmPreviewProps> = ({ isEmbedded = false }) =>
                       gap: '10px',
                       fontSize: '14px',
                       lineHeight: 1.5,
-                      cursor: 'pointer'
+                      cursor: formSubmitting ? 'not-allowed' : 'pointer'
                     }}
                   >
                     <input
                       type="checkbox"
+                      disabled={formSubmitting}
                       checked={fConsent}
                       onChange={(e) => setFConsent(e.target.checked)}
                       style={{ width: '18px', height: '18px', margin: '2px 0 0', flex: 'none' }}
                     />
                     <span>
-                      I agree that AEO may use these details to send me the brief, as set out in the privacy notice.
+                      I agree that AEO may use these details to review my request and contact me regarding the brief, as set out in the privacy notice.
                     </span>
                   </label>
+
+                  {formError && (
+                    <div
+                      role="alert"
+                      style={{
+                        padding: '12px 14px',
+                        borderRadius: '4px',
+                        border: '1px solid #fecaca',
+                        background: '#fef2f2',
+                        color: '#991b1b',
+                        fontSize: '14px',
+                        lineHeight: 1.5
+                      }}
+                    >
+                      {formError}
+                    </div>
+                  )}
 
                   <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end', gap: '10px', marginTop: '6px' }}>
                     <button
                       type="button"
+                      disabled={formSubmitting}
                       onClick={handleCloseModal}
                       style={{
                         font: 'inherit',
@@ -2507,14 +2467,15 @@ export const DcmPreview: React.FC<DcmPreviewProps> = ({ isEmbedded = false }) =>
                         border: '1px solid #8a939c',
                         background: '#ffffff',
                         color: '#1c232b',
-                        cursor: 'pointer'
+                        cursor: formSubmitting ? 'not-allowed' : 'pointer',
+                        opacity: formSubmitting ? 0.65 : 1
                       }}
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      disabled={!canSubmit}
+                      disabled={!canSubmit || formSubmitting}
                       style={{
                         font: 'inherit',
                         fontSize: '15px',
@@ -2523,12 +2484,12 @@ export const DcmPreview: React.FC<DcmPreviewProps> = ({ isEmbedded = false }) =>
                         padding: '8px 18px',
                         borderRadius: '4px',
                         border: 'none',
-                        background: canSubmit ? '#1c232b' : '#8a939c',
+                        background: canSubmit && !formSubmitting ? '#1c232b' : '#8a939c',
                         color: '#ffffff',
-                        cursor: canSubmit ? 'pointer' : 'not-allowed'
+                        cursor: canSubmit && !formSubmitting ? 'pointer' : 'not-allowed'
                       }}
                     >
-                      Request the brief
+                      {formSubmitting ? 'Sending request...' : 'Request the brief'}
                     </button>
                   </div>
                 </form>
@@ -2538,7 +2499,7 @@ export const DcmPreview: React.FC<DcmPreviewProps> = ({ isEmbedded = false }) =>
                     Request received
                   </h2>
                   <p style={{ margin: 0, fontSize: '15px', lineHeight: 1.5 }}>
-                    We will send the DCM Brief for the {activePub.short} publication to <strong>{fEmail}</strong>.
+                    Thank you. Your DCM Brief request has been received. The AEO team will contact you using the email address provided.
                   </p>
                   <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <button
