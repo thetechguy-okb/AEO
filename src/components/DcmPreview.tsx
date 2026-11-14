@@ -2172,6 +2172,164 @@ export const DcmPreview: React.FC<DcmPreviewProps> = ({ isEmbedded = false }) =>
           </aside>
         </div>
 
+        {/* DCM Explanatory Section (Standalone DCM Page) */}
+        {!isEmbedded && (
+          <section
+            aria-label="About the Democratic Competitiveness Map"
+            className="bg-white border border-line rounded-2xl p-6 sm:p-10 space-y-8 shadow-sm"
+          >
+            <div className="space-y-6 text-ink2 text-base leading-relaxed">
+              <h2 className="font-display font-bold text-2xl text-ink">What is DCM?</h2>
+              <p>
+                The Democratic Competitiveness Map (DCM) is the Athena Election Observatory’s evidence-based system for monitoring the conditions under which legitimate political actors compete across Nigeria’s thirty-six states and the Federal Capital Territory.
+              </p>
+              <p>
+                A credible election requires more than a credible election day. Political actors must also have a practical opportunity to organise, communicate, move, assemble and compete before voters cast their ballots.
+              </p>
+              <p>
+                Election integrity examines whether voting, counting and collation reflect the will of voters. The DCM examines the environment in which political actors compete, whether the political actors have a reasonably open and fair opportunity to compete for those votes.
+              </p>
+              <p>
+                The DCM assesses whether political parties, candidates and other legitimate political actors can organise, communicate, mobilise, move, campaign, access relevant institutions and participate in political competition under conditions of political pluralism, institutional neutrality, legal certainty and practical fairness.
+              </p>
+            </div>
+
+            <div className="space-y-6 text-ink2 text-base leading-relaxed border-t border-line pt-8">
+              <h2 className="font-display font-bold text-2xl text-ink">What does it track?</h2>
+              <p>The DCM tracks five dimensions of the political competition environment:</p>
+              <ul className="list-disc pl-6 space-y-3">
+                <li>
+                  <strong className="text-ink">Political Space — Freedom of Association and Movement:</strong> Whether political actors can organise, assemble, move and campaign without unjustified or discriminatory restrictions.
+                </li>
+                <li>
+                  <strong className="text-ink">Freedom of Speech and Expression:</strong> Whether political actors can communicate, campaign and express political positions without materially restrictive interference.
+                </li>
+                <li>
+                  <strong className="text-ink">Administrative and Regulatory Neutrality:</strong> Whether administrative, regulatory and legal powers are applied impartially and without creating discriminatory competitive effects.
+                </li>
+                <li>
+                  <strong className="text-ink">Security Neutrality:</strong> Whether police and security institutions protect lawful political activity and enforce applicable rules impartially across political actors.
+                </li>
+                <li>
+                  <strong className="text-ink">Political Intimidation and Violence:</strong> Whether threats, coercion or violence materially restrict political actors from participating in political competition.
+                </li>
+              </ul>
+            </div>
+
+            <div className="space-y-6 text-ink2 text-base leading-relaxed border-t border-line pt-8">
+              <h2 className="font-display font-bold text-2xl text-ink">What does it seek to achieve?</h2>
+              <p>The DCM is designed to:</p>
+              <ul className="list-disc pl-6 space-y-3">
+                <li>Provide an evidence-based picture of political competition conditions across Nigeria before election day.</li>
+                <li>Identify emerging restrictions and pressure points that may affect the ability of political actors to compete.</li>
+                <li>Track changes in competitive conditions over time, including whether conditions improve, deteriorate or remain unchanged.</li>
+                <li>Make the evidence behind each classification transparent and traceable, allowing users to examine the basis for a state’s classification.</li>
+                <li>Highlight areas requiring closer attention from political actors, institutions, civil society, researchers and other stakeholders as elections approach.</li>
+              </ul>
+            </div>
+
+            <div className="space-y-6 text-ink2 text-base leading-relaxed border-t border-line pt-8">
+              <h2 className="font-display font-bold text-2xl text-ink">What is it not?</h2>
+              <p>The DCM:</p>
+              <ul className="list-disc pl-6 space-y-3">
+                <li>Does not rank states or political parties.</li>
+                <li>Does not assign numerical scores, weights or composite values.</li>
+                <li>Does not measure political popularity, vote share or predict electoral outcomes.</li>
+                <li>Does not assess whether a court reached the correct legal conclusion.</li>
+                <li>Does not treat allegations as established facts without sufficient verification.</li>
+                <li>Is not a general democracy, governance or civil-liberties index.</li>
+                <li>Does not equate limited reporting or lack of evidence with an open political environment.</li>
+                <li>Does not replace AEO’s election-day monitoring or Post-Election Audit workstreams.</li>
+              </ul>
+              <p className="mt-4">
+                Each colour represents the current state of evidence for a defined reporting period, rather than a permanent judgment about a state. Classifications can change as conditions change, restrictions are remedied, or stronger evidence becomes available.
+              </p>
+            </div>
+
+            <div className="space-y-6 text-ink2 text-base leading-relaxed border-t border-line pt-8">
+              <h2 className="font-display font-bold text-2xl text-ink">How do the colours work?</h2>
+              <p>
+                The DCM uses five colour classifications. The colours are evidence-based and time-bound; they are not permanent labels assigned to states.
+              </p>
+
+              {/* Responsive Colours Table */}
+              <div className="overflow-x-auto my-6 border border-line rounded-xl">
+                <table className="w-full text-left border-collapse text-sm">
+                  <thead>
+                    <tr className="bg-paper border-b border-line text-ink font-mono text-xs uppercase">
+                      <th className="p-4 font-bold">Colour</th>
+                      <th className="p-4 font-bold">Classification</th>
+                      <th className="p-4 font-bold">What it means</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-line text-ink2">
+                    <tr className="hover:bg-paper/50">
+                      <td className="p-4 font-semibold text-ink align-top whitespace-nowrap">
+                        <span className="inline-flex items-center gap-2">
+                          <span className="w-3.5 h-3.5 rounded-full bg-emerald-500 inline-block shrink-0" />
+                          Green
+                        </span>
+                      </td>
+                      <td className="p-4 font-bold text-ink align-top">Open</td>
+                      <td className="p-4">
+                        Affirmative and sufficiently broad evidence indicates broadly equal practical political access during the reporting period, with political actors able to organise, communicate, mobilise and campaign without verified material or discriminatory restrictions. No verified pattern of material restriction remains at the cut-off date. Absence of adverse reporting or insufficient evidence is not, by itself, grounds for a Green classification.
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-paper/50">
+                      <td className="p-4 font-semibold text-ink align-top whitespace-nowrap">
+                        <span className="inline-flex items-center gap-2">
+                          <span className="w-3.5 h-3.5 rounded-full bg-amber-400 inline-block shrink-0" />
+                          Amber
+                        </span>
+                      </td>
+                      <td className="p-4 font-bold text-ink align-top">Emerging Concern</td>
+                      <td className="p-4">
+                        A material incident or early evidence of unequal treatment requires monitoring, but the evidence does not yet establish a sustained or substantial restrictive pattern.
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-paper/50">
+                      <td className="p-4 font-semibold text-ink align-top whitespace-nowrap">
+                        <span className="inline-flex items-center gap-2">
+                          <span className="w-3.5 h-3.5 rounded-full bg-orange-500 inline-block shrink-0" />
+                          Orange
+                        </span>
+                      </td>
+                      <td className="p-4 font-bold text-ink align-top">Constrained</td>
+                      <td className="p-4">
+                        Multiple verified incidents, an identifiable pattern, or an exceptionally serious and well-documented action materially restricts political competition.
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-paper/50">
+                      <td className="p-4 font-semibold text-ink align-top whitespace-nowrap">
+                        <span className="inline-flex items-center gap-2">
+                          <span className="w-3.5 h-3.5 rounded-full bg-red-600 inline-block shrink-0" />
+                          Red
+                        </span>
+                      </td>
+                      <td className="p-4 font-bold text-ink align-top">Severely Constrained</td>
+                      <td className="p-4">
+                        Serious, sustained or systemic restrictions substantially impair political competition, taking into account their severity, reach, institutional authority and consequences.
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-paper/50">
+                      <td className="p-4 font-semibold text-ink align-top whitespace-nowrap">
+                        <span className="inline-flex items-center gap-2">
+                          <span className="w-3.5 h-3.5 rounded-full bg-slate-300 inline-block shrink-0" />
+                          Grey
+                        </span>
+                      </td>
+                      <td className="p-4 font-bold text-ink align-top">Insufficient Evidence</td>
+                      <td className="p-4">
+                        Available evidence is inadequate to make a responsible classification. Importantly, insufficient evidence does not mean that political competition is open.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Embedded Mode Footer Banner */}
         {isEmbedded && (
           <div
